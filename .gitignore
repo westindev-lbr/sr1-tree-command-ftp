@@ -70,11 +70,11 @@ Temporary Items
 
 ### VisualStudioCode ###
 .vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/*.code-snippets
+.vscode/settings.json
+.vscode/tasks.json
+.vscode/launch.json
+.vscode/extensions.json
+.vscode/*.code-snippets
 
 # Local History for Visual Studio Code
 .history/
@@ -87,6 +87,6 @@ Temporary Items
 .history
 .ionide
 
-
+client-ftp-*
 tree-ftp-*
 # End of https://www.toptal.com/developers/gitignore/api/c++,visualstudiocode,macos

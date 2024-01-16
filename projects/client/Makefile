@@ -2,7 +2,7 @@ CXX= g++
 CXXFLAGS= -Wall -Wextra -Wpedantic -std=c++17
 LEAK= -fno-omit-frame-pointer -fno-optimize-sibling-calls -fsanitize=address -fsanitize=undefined
 
-PROG=tree-ftp-${VERSION}
+PROG=client-ftp-${VERSION}
 VERSION=0.1.0
 
 
