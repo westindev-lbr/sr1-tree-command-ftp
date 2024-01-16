@@ -41,4 +41,14 @@ C'est donc à vous d'envoyer ces commandes du standard FTP en utilisant des sock
 
 ## Usage
 
+Client :
+
+```sh
+❯ cd projects/client
+
+❯ make 
+
+❯ bin/client-ftp-0.1.0 ftp.ubuntu.com
+```
+
 ## Roadmap
