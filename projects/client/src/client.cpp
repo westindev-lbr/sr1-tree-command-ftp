@@ -6,6 +6,7 @@
 #include <arpa/inet.h>
 #include <sys/socket.h>
 #include <sstream>
+#include <cstring>
 
 ClientFtp::ClientFtp( Parameters parameters ) :
     addr_server_ftp_ { parameters.GetAdrrServerFtp() },

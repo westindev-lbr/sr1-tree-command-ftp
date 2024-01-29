@@ -2,6 +2,7 @@
 #define TREE_HPP
 
 #include <string>
+#include <vector>
 
 class Tree {
 public:
