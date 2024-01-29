@@ -59,14 +59,12 @@ int main( int argc, char* argv[] ) {
         // client.ConnectToDataChannelProcess();
         // client.ListCurrentDirectoryCommand();
         // client.ReadResponseDataChannel();
-
-
-        // Initialisation de l'arbre
-        client.InitTree();
+        
         // Affichage de l'arbre
-        client.DeepFirstSearch( client.GetTree(), 0 );
-
+        client.DeepFirstSearch( client.GetTree(), 1 );
         client.GetTree()->PrintTree();
+
+        std::cout << "\n";
 
         // ! Envoi de la commande QUIT
         client.SendCommand( Command::QUIT );

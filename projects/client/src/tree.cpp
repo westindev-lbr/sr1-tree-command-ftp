@@ -3,7 +3,7 @@
 #include <sstream>
 
 Tree::Tree() {
-    depth_ = 0;
+    depth_ = 1;
     name_ = ".";
     is_dir_ = true;
     parent_ = nullptr;
@@ -80,7 +80,15 @@ void Tree::AddChild( Tree* child ) {
     children_.push_back( child );
 }
 
-void Tree::PrintTree( const std::string& prefix, bool isLast ) {
+void Tree::PrintTree() {
+    std::cout << this->name_ << std::endl;
+
+    for ( size_t i = 0; i < children_.size(); ++i ) {
+        children_[i]->PrintSubTree( "", i == children_.size() - 1 );
+    }
+}
+
+void Tree::PrintSubTree( const std::string& prefix, bool isLast ) {
     std::string branch = isLast ? "└── " : "├── ";
     std::cout << prefix << branch << this->name_ << std::endl;
 
@@ -88,7 +96,7 @@ void Tree::PrintTree( const std::string& prefix, bool isLast ) {
     std::string childPrefix = prefix + ( isLast ? "    " : "│   " );
 
     for ( size_t i = 0; i < children_.size(); ++i ) {
-        children_[i]->PrintTree( childPrefix, i == children_.size() - 1 );
+        children_[i]->PrintSubTree( childPrefix, i == children_.size() - 1 );
     }
 }
 

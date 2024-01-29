@@ -76,7 +76,7 @@ private:
     struct addrinfo hints_;             // struct addrinfo hints_ : Structure d'informations sur le socket
     struct addrinfo* result_;           // Pointeur vers la structure d'informations sur le socket
     struct sockaddr_in data_address_;   // Structure d'informations sur le socket du canal de données
-    Tree* tree_;                        // Arbre de fichiers et répertoires
+    Tree* tree_ = new Tree();           // Arbre de fichiers et répertoires
     std::string arg_cmd_;               // Argument de la commande  
 
     void SetHints();

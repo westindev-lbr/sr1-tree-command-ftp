@@ -11,7 +11,7 @@ public:
     Tree* InitTree( const char * buffer_data);
     Tree* NewTree( int depth, std::string name, bool is_dir, Tree* parent, std::string permissions, int nb_links, std::string owner, std::string group, int size, std::string date, std::string time);
     void AddChild( Tree* child );
-    void PrintTree(const std::string& prefix = "", bool isLast = true);
+    void PrintTree();
     void SetIsDir( bool is_dir );
     std::string GetName() const;
     Tree* GetParent() const;
@@ -32,6 +32,9 @@ private:
 
     Tree* parent_;
     std::vector<Tree*> children_;
+
+    void PrintSubTree(const std::string& prefix = "", bool isLast = true);
+
 };
 
 #endif  //TREE_HPP
