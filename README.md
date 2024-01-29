@@ -37,18 +37,27 @@ C'est donc à vous d'envoyer ces commandes du standard FTP en utilisant des sock
 
 ## Visuals
 
+![img](./screen_tree_terminal.png)
+
 ## Installation
 
-## Usage
+## Utilisation
 
 Client :
 
 ```sh
-❯ cd projects/client
+cd projects/client
+make 
+```
 
-❯ make 
+```sh
+./bin/client-ftp-0.1.0 ftp.ubuntu.com
+```
 
-❯ bin/client-ftp-0.1.0 ftp.ubuntu.com
+* Avec profondeur d'exploration (optionnel) ainsi que nom d'utilisateur et mot de passe
+
+```sh
+./bin/client-ftp-0.1.0 -L 3 ftp.dlptest.com dlpuser rNrKYTX9g7z3RgJRmxWuGHbeu
 ```
 
 ## Roadmap
