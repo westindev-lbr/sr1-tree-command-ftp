@@ -17,13 +17,16 @@ CommandLineInterfaceFtpClient::CommandLineInterfaceFtpClient( int argc, char* ar
 
 void CommandLineInterfaceFtpClient::ParseOptions( int argc, char* argv[] ) {
     int opt;
-    while ( ( opt = getopt( argc, argv, "hL:" ) ) != -1 ) {
+    while ( ( opt = getopt( argc, argv, "hL:J" ) ) != -1 ) {
         switch ( opt ) {
         case 'h':
             ShowHelp( argv[0] );
             break;
         case 'L':
             parameters_.SetExplorationDepth( std::stoi( optarg ) );
+            break;
+        case 'J':
+            parameters_.SetIsJsonMode( true );
             break;
         case '?':
             // Traitement des erreurs d'option
@@ -63,7 +66,6 @@ void CommandLineInterfaceFtpClient::ShowHelp( std::string program_name ) {
     exit( 0 );
 }
 
-
 Parameters CommandLineInterfaceFtpClient::GetParameters() const {
     return parameters_;
 }
@@ -85,6 +87,10 @@ void Parameters::SetPassword( std::string password ) {
     password_ = password;
 }
 
+void Parameters::SetIsJsonMode( bool is_json_mode ) {
+    is_json_mode_ = is_json_mode;
+}
+
 std::string Parameters::GetAdrrServerFtp() const {
     return addr_server_ftp_;
 }
@@ -99,4 +105,8 @@ std::string Parameters::GetPassword() const {
 
 int Parameters::GetExplorationDepth() const {
     return exploration_depth_;
+}
+
+bool Parameters::GetIsJsonMode() const {
+    return is_json_mode_;
 }

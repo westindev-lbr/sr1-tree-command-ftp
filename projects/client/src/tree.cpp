@@ -3,7 +3,7 @@
 #include <sstream>
 
 Tree::Tree() {
-    depth_ = 1;
+    depth_ = 0;
     name_ = ".";
     is_dir_ = true;
     parent_ = nullptr;
@@ -36,6 +36,8 @@ Tree* Tree::InitTree( const char* buffer_data ) {
 
         // Supprimer les espaces de début de 'name'
         name = name.substr( name.find_first_not_of( ' ' ) );
+        // Supprimer les espaces de fin de 'name'
+        name = name.substr( 0, name.find_last_not_of( '\r' ) + 1 );
 
         // Créer un nouveau noeud
         Tree* new_node = NewTree(
@@ -118,4 +120,76 @@ void Tree::SetIsDir( bool is_dir_condition ) {
 
 std::vector<Tree*> Tree::GetChildren() const {
     return children_;
+}
+
+
+std::string Tree::ConvertTreeToJson() {
+    // flux de sortie pour manipuler la chaîne de caractères de manière dynamique
+    std::pair<int, int> total = UpdateCountDirFileRecursive();
+    std::string json = "";
+
+    json += "[\n";
+    json += this->ConvertNodeToJson( "  " );
+    json += "\n,\n";
+        // Mise à jour des compteurs de fichiers et de répertoires
+    json += "{\"type\":\"report\",\"directories\":";
+    json += std::to_string(total.first);
+    json += ",\"files\":";
+    json += std::to_string(total.second);
+    json +=  "}";
+    json += "\n]";
+
+    return json;
+}
+
+
+std::string Tree::ConvertNodeToJson( std::string prefix ) const {
+    if ( this->is_dir_ ) {
+        return this->ConvertDirToJson( prefix );
+    }
+
+    return this->ConvertFileToJson( prefix );
+}
+
+std::string Tree::ConvertFileToJson( std::string prefix ) const {
+    std::string json = "";
+
+    json += prefix;
+    json += "{";
+    json += "\"type\":\"file\",";
+    json += "\"name\":\"" + this->name_ + "\"";
+    json += "}";
+
+    return json;
+}
+
+std::string Tree::ConvertDirToJson( std::string prefix ) const {
+    std::string json = "";
+
+    json += prefix;
+    json += "{";
+    json += "\"type\":\"directory\",";
+    json += "\"name\":\"" + this->name_ + "\"";
+
+    if ( !children_.empty() ) {
+        json += ",\"contents\": [\n";
+
+        for ( size_t i = 0; i < children_.size(); ++i ) {
+            json += children_[i]->ConvertNodeToJson( prefix + "  " );
+
+            if ( i < children_.size() - 1 ) {
+                json += ",";
+            }
+            json += "\n";
+        }
+        json += prefix;
+        json += "]";
+    }
+    json += "}";
+
+    return json;
+}
+
+void Tree::PrintTreeJson() {
+    std::cout << this->ConvertTreeToJson() << std::endl;
 }

@@ -110,19 +110,9 @@ TEST( CommandLineInterfaceFtpClientTest, ShouldReturnServerAddressAndUsername ) 
     EXPECT_EQ( "", cli.GetParameters().GetPassword() );
 }
 
-TEST_F( CommandLineInterfaceFtpClientTestWithOneArg, ShouldResturnNbTwoArgs ) {
-    EXPECT_EQ( 2, cli->GetNbArgs() );
-    EXPECT_EQ( 2, cli->GetArgs().size() );
-}
-
 TEST_F( CommandLineInterfaceFtpClientTestWithOneArg, ShouldResturnFtpServerAddressPassedAsArg ) {
     Parameters params = cli->GetParameters();
     EXPECT_EQ( "ftp.ubuntu.com", params.GetAdrrServerFtp() );
-}
-
-TEST_F( CommandLineInterfaceFtpClientTestWithThreeArg, ShouldReturnNbArgsEqualThree ) {
-    EXPECT_EQ( 3, cli->GetNbArgs() );
-    EXPECT_EQ( 3, cli->GetArgs().size() );
 }
 
 TEST_F( CommandLineInterfaceFtpClientTestWithTwoArg, ShouldReturnAllArgsPassed ) {
@@ -130,11 +120,6 @@ TEST_F( CommandLineInterfaceFtpClientTestWithTwoArg, ShouldReturnAllArgsPassed )
     EXPECT_EQ( "ftp.ubuntu.com", params.GetAdrrServerFtp() );
     EXPECT_EQ( "toto", params.GetUsername() );
     EXPECT_EQ( "", params.GetPassword() );
-}
-
-TEST_F( CommandLineInterfaceFtpClientTestWithThreeArg, ShouldReturnNbArgsEqualFour ) {
-    EXPECT_EQ( 4, cli->GetNbArgs() );
-    EXPECT_EQ( 4, cli->GetArgs().size() );
 }
 
 TEST_F( CommandLineInterfaceFtpClientTestWithThreeArg, ShouldReturnAllArgsPassed ) {

@@ -11,7 +11,8 @@ protected:
             "ftp.ubuntu.com",
             "toto",
             "azerty",
-            0
+            0,
+            false
         );
         client = new ClientFtp(parameters);
     }
