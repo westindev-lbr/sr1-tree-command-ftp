@@ -138,6 +138,8 @@ std::string ClientFtp::ParseCommand( enum Command cmd ) const {
         return "LIST\r\n";
     case Command::CWD:
         return "CWD " + arg_cmd_ + "\r\n";
+    case Command::CDUP:
+        return "CDUP\r\n";
     case Command::QUIT:
         return "QUIT\r\n";
     default:
@@ -254,7 +256,8 @@ void ClientFtp::DeepFirstSearch( Tree* current_tree, int depth ) {
         }
 
         // Retour au répertoire parent
-        ChangeDirectory( ".." );
+        // ChangeDirectory( ".." );
+        BackToParentDirectory();
     }
 }
 
@@ -264,6 +267,15 @@ void ClientFtp::ChangeDirectory( std::string dir_name ) {
     SendCommand( Command::CWD );
     std::pair<int, std::string> res = ReadResponse();
     // std::cout << res.first << " " << res.second << std::endl;
+    if ( res.first != 250 ) {
+        std::cerr << "Erreur lors du changement de répertoire" << std::endl;
+        throw FtpException { res.first, res.second };
+    }
+}
+
+void ClientFtp::BackToParentDirectory() {
+    SendCommand( Command::CDUP );
+    std::pair<int, std::string> res = ReadResponse();
     if ( res.first != 250 ) {
         std::cerr << "Erreur lors du changement de répertoire" << std::endl;
         throw FtpException { res.first, res.second };

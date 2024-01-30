@@ -46,6 +46,7 @@ public:
     // Méthodes d'envoi et de réception de données
     void SendCommand( enum Command command );
     void ChangeDirectory( std::string arg_cmd );
+    void BackToParentDirectory();
     void EnterInPassiveMode();
     void ListCurrentDirectoryCommand();
     void ReadResponseDataChannel();
