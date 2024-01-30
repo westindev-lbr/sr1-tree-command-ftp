@@ -59,10 +59,16 @@ int main( int argc, char* argv[] ) {
         // client.ConnectToDataChannelProcess();
         // client.ListCurrentDirectoryCommand();
         // client.ReadResponseDataChannel();
-        
+
         // Affichage de l'arbre
         client.DeepFirstSearch( client.GetTree(), 1 );
-        client.GetTree()->PrintTree();
+
+        if ( params.GetIsJsonMode() ) {
+            client.GetTree()->PrintTreeJson();
+        }
+        else {
+            client.GetTree()->PrintTree();
+        }
 
         std::cout << "\n";
 
