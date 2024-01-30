@@ -243,8 +243,10 @@ void ClientFtp::DeepFirstSearch( Tree* current_tree, int depth ) {
         return;
     }
     if ( current_tree->GetIsDir() ) {
+
         // Changement de répertoire
         ChangeDirectory( current_tree->GetName() );
+
         EnterInPassiveMode();
         ConnectToDataChannelProcess();
         ListCurrentDirectoryCommand();
@@ -252,7 +254,45 @@ void ClientFtp::DeepFirstSearch( Tree* current_tree, int depth ) {
         current_tree->InitTree( buffer_data_ );
         // Parcours des enfants
         for ( auto child : current_tree->GetChildren() ) {
-            DeepFirstSearch( child, depth + 1 );
+
+            try {
+                DeepFirstSearch( child, depth + 1 );
+            }
+            catch ( FtpException& e ) {
+                if ( e.GetCodeError() == 550 ) {
+                    std::cerr << "EXCEPTIONS => " << e.what() << '\n';
+                    continue;
+                }
+                else {
+                    CloseControlSocket();
+                    CloseDataSocket();
+                    ConnectToServerProcess();
+                    // ! Réception de la réponse du serveur
+                    std::pair<int, std::string> response = ReadResponse();
+                    std::cout << response.first << " " << response.second;
+
+                    // ! (1) Envoi de l'utilisateur
+                    SendCommand( Command::USER );
+                    response =  ReadResponse();
+                    std::cout << response.first << " " << response.second;
+
+                    // ! (2) Envoi du mot de passe
+                    SendCommand( Command::PASS );
+                    response =  ReadResponse();
+                    std::cout << response.first << " " << response.second;
+
+                    // ! (3) Envoi de la commande passive
+                    EnterInPassiveMode();
+                    ConnectToDataChannelProcess();
+                    ListCurrentDirectoryCommand();
+                    ReadResponseDataChannel();
+                    current_tree->InitTree( buffer_data_ );
+
+
+                }
+
+            }
+
         }
 
         // Retour au répertoire parent
