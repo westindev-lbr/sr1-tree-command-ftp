@@ -1,54 +1,220 @@
 # SR1 - Projet n°1 Tree FTP
 
-Axel LABARRE - SR1 - M1GL
+Axel LABARRE - SR1 - M1GL\
+30/01/2024
 
-## Description
+## Introduction
 
-### Consignes
+Ce projet consiste à mettre en œuvre une commande shell permettant d'afficher sur la sortie standard d'un terminal l'arborescence d'un répertoire distant
+accessible via le protocole applicatif File Transfer Protocol (FTP).
+Le rendu de l'arborescence distante s'inspire du formalisme utilisé par la commande `tree` de Linux.
 
-Ce premier projet est à réaliser individuellement.\
-Vous avez 3 semaines pour le réaliser.\
-Pour les consignes de rendu, voir la page avec toutes les conssignes dans l'espace Moodle. Chaque semaine, et avant la séance suivante de cours, vous devrez produire un livrable hebdomadaire de votre projet en i) créant une étiquette Git de l'état courant du projet intitulée LIVRABLE_X et ii) partageant l'URL de cette étiquette via le formulaire Moodle associé à la séance (cf. livrable nºX). Les livrables intermédiaires ne donnent pas lieu à une note, mais l'absence de livrable hebdomadaire pourra être sanctionnée dans la note finale du projet.
+## Architecture
 
-### Énoncé
+* Organisation en module
+* Séparation du Code Source et des En-têtes
+* Dossier de Documentation + README + Commentaires dans le code
+* Tests Unitaires
+* Makefile pour la Compilation
+* Fichiers Exécutables et construction séparée
 
-L'objectif du projet est de mettre en œuvre un commande shell permettant d'afficher sur la sortie standard d'un terminal l'arborescence d'un répertoire distant accessible via le protocole applicatif File Transfer Protocol (FTP).\
-Le rendu de l'arborescence distante s'inspirera du formalisme utilisé la commande tree de Linux.
+## Visuels
 
-Cette nouvelle commande tree-ftp prend un argument obligatoire en paramètre:
-> l'adresse du serveur FTP distant.\
-> Le 2e argument—optionnel—permet d'indiquer le nom d'utilisateur à utiliser,\
-> le 3e—optionnel également—correspond au mot de passe.
+<div>
+    <img src="./doc/screen_tree_terminal.png" width="500" alt="tree">
+    <img src="./doc/screen_json.png" width="500" alt="json">
+</div>
+## Code Samples
 
-Il n'y a aucune autre interaction de l'utilisateur avec la commande qui est nécessaire au delà de l'exécution avec les paramètres décrits ci-dessus.
+#### Gestion de la ligne de commande
 
-Typiquement, l'utilisateur doit uniquement indiquer :
+Ce bout de code permet de gérer les différentes options et arguments passés au programme lors de son exécution.
+Quelques variables et méthodes nous sont fournies par la librairie `unistd.h` :
 
-```java
-java -jar TreeFtp.jar ftp.ubuntu.com
+* `getopt()`: permet d'analyser les différentes options de la forme `-o`
+* `optarg`: l'argument de l'option correspondante
+* `optind`: l'index des arguments positionnels restant après analyse des options
+
+```cpp
+void CommandLineInterfaceFtpClient::ParseOptions( int argc, char* argv[] ) {
+    int opt;
+    while ( ( opt = getopt( argc, argv, "hL:J" ) ) != -1 ) {
+        switch ( opt ) {
+        case 'h':
+            ShowHelp( argv[0] );
+            break;
+        case 'L':
+            parameters_.SetExplorationDepth( std::stoi( optarg ) );
+            break;
+        case 'J':
+            parameters_.SetIsJsonMode( true );
+            break;
+
+        // Reste du code ...
+        
+        }
+
+    }
+}
+
+void CommandLineInterfaceFtpClient::ParsePosArguments( int argc, char* argv[] ) {
+    if ( optind < argc ) {
+        std::string addr_server_ftp = argv[optind++];
+        std::string username = optind < argc ? argv[optind++] : "anonymous";
+        std::string password = optind < argc ? argv[optind++] : "";
+        parameters_.SetServerAddress( addr_server_ftp );
+        parameters_.SetUsername( username );
+        parameters_.SetPassword( password );
+    }
+    else {
+        throw std::invalid_argument( "Usage: " + std::string( argv[0] ) + " [ftp_server_address] or -h for consult help" );
+    }
+}
 ```
 
-Votre code affichera alors le contenu du répertoire distant de `ftp.ubuntu.com` en parcourant l'arborescence de `ftp.ubuntu.com` en profondeur d'abord.\
-Pour réaliser cette commande, nous nous intéresserons donc en priorité à l'utilisation des commandes USER, PASS, LIST, CWD, CDUP de la RFC 959 (File Transfer Protocol).\
+#### Affichage similaire à la commande Tree
 
-Ces commandes constituent les principales actions que l'on souhaite réaliser pour se connecter et se déplacer dans l'arborescence du serveur distant.\
+Utilisation de caractère ASCII spécifique pour les branches et d'un préfixe pour l'indentation et d'une condition pour marquer le dernier élément afin d'inclure l'indentation.
 
-C'est donc à vous d'envoyer ces commandes du standard FTP en utilisant des sockets TCP (en Java ou autre) et d'analyser les réponses transmises par le serveur FTP distant.
+```cpp
+void Tree::PrintTree() {
+    std::cout << this->name_ << std::endl;
 
-## Visuals
+    for ( size_t i = 0; i < children_.size(); ++i ) {
+        children_[i]->PrintSubTree( "", i == children_.size() - 1 );
+    }
 
-## Installation
+    std::cout << std::endl; 
+    PrintReport();
+}
 
-## Usage
+void Tree::PrintSubTree( const std::string& prefix, bool is_last ) {
+    std::string branch = is_last ? "└── " : "├── ";
+    std::cout << prefix << branch << this->name_ << std::endl;
 
-Client :
+    // Construction du préfixe pour les enfants
+    std::string child_prefix = prefix + ( is_last ? "    " : "│   " );
+
+    for ( size_t i = 0; i < children_.size(); ++i ) {
+        children_[i]->PrintSubTree( child_prefix, i == children_.size() - 1 );
+    }
+}
+```
+
+#### Parcours en profondeur + gestion des codes erreur FTP
+
+Applique un parcours en profondeur de l'arbre pour ouvrir les répertoires.
+Initialiser un nouveau nœud dans l'arbre en réponse à l'affichage du contenu des répertoires.
+Itération sur les nœuds enfants et appel récursif du parcours en profondeur.
+Gestion des exceptions via les codes erreurs FTP à l'aide d'un try-catch pour capturer l'exception et indiquer que faire.
+Typiquement pour un problème d'accès à un répertoire, on ne voudrait pas interrompre le programme, mais passer au répertoire ou fichier suivant.
+
+```cpp
+void ClientFtp::DeepFirstSearch( Tree* current_tree, int depth ) {
+    // Si la profondeur maximale est atteinte, retourner
+    if ( depth > exploration_depth_ ) {
+        return;
+    }
+    if ( current_tree->GetIsDir() ) {
+
+        // Changement de répertoire
+        ChangeDirectory( current_tree->GetName() );
+
+        EnterInPassiveMode();
+        ConnectToDataChannelProcess();
+        ListCurrentDirectoryCommand();
+        ReadResponseDataChannel();
+        current_tree->InitTree( buffer_data_ );
+        // Parcours des enfants
+        for ( auto child : current_tree->GetChildren() ) {
+
+            try {
+                DeepFirstSearch( child, depth + 1 );
+            }
+            catch ( FtpException& e ) {
+                if ( e.GetCodeError() == 550 ) {
+                    std::cerr << "EXCEPTIONS => " << e.what() << '\n';
+                    // Passe à l'élément suivant
+                    continue;
+                }
+                else {
+                    // Fermeture des sockets et libération de la mémoire
+                    // Avant tentative de reconnexion
+                    CloseControlSocket();
+                    CloseDataSocket();
+
+                    // Reconnexion au serveur
+                    ConnectToServerProcess();
+                    std::pair<int, std::string> response = ReadResponse();
+                    std::cout << response.first << " " << response.second;
+
+                    // Login
+                    SendCommand( Command::USER );
+                    response =  ReadResponse();
+                    std::cout << response.first << " " << response.second;
+
+                    SendCommand( Command::PASS );
+                    response =  ReadResponse();
+                    std::cout << response.first << " " << response.second;
+
+                    // Changement de répertoire
+                    EnterInPassiveMode();
+                    ConnectToDataChannelProcess();
+                    ListCurrentDirectoryCommand();
+                    ReadResponseDataChannel();
+                    current_tree->InitTree( buffer_data_ );
+                }
+
+            }
+
+        }
+
+        // Retour au répertoire parent
+        BackToParentDirectory();
+    }
+}
+
+```
+
+## Utilisation
+
+La présence d'un makefile vous permettra de build facilement ce projet
 
 ```sh
-❯ cd projects/client
+make 
+```
 
-❯ make 
+* Consulter l'aide :
 
-❯ bin/client-ftp-0.1.0 ftp.ubuntu.com
+```sh
+./bin/tree-ftp -h
+```
+
+* Avec utilisateur anonymous et sans mot de passe :
+
+```sh
+./bin/tree-ftp ftp.ubuntu.com
+```
+
+* Avec profondeur d'exploration (optionnel) ainsi que nom d'utilisateur et mot de passe :
+
+```sh
+./bin/tree-ftp -L 3 ftp.dlptest.com dlpuser rNrKYTX9g7z3RgJRmxWuGHbeu
+```
+
+* Affichage JSON + Profondeur :
+
+```sh
+./bin/tree-ftp -L 3 ftp.dlptest.com dlpuser rNrKYTX9g7z3RgJRmxWuGHbeu -J
 ```
 
 ## Roadmap
+
+* [x] Compile et affiche la liste du répertoire distant
+* [x] Le serveur FTP, le login et mot de passe peuvent être configurés en ligne de commande
+* [x] Parcours d'arbre en profondeur
+* [x] La profondeur d'exploration peut être configurée en ligne de commande
+* [x] Affichage de l'arborescence au format Json
+* [ ] Parcours en largeur
+* [x] Gestion d'erreur
+* [ ] Autres commandes Tree supplémentaires

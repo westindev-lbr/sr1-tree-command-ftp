@@ -88,5 +88,5 @@ Temporary Items
 .ionide
 
 client-ftp-*
-tree-ftp-*
+tree-ftp
 # End of https://www.toptal.com/developers/gitignore/api/c++,visualstudiocode,macos
