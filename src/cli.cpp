@@ -55,12 +55,13 @@ void CommandLineInterfaceFtpClient::ParsePosArguments( int argc, char* argv[] ) 
 void CommandLineInterfaceFtpClient::ShowHelp( std::string program_name ) {
     std::cout << "Utilisation: " << program_name << " [options] [ftp_server_address] [username] [password]" << std::endl;
     std::cout << "\n\033[1mOPTIONS\033[0m" << std::endl;
-    std::cout <<    "\t-h \t\t\taffiche l'aide" << std::endl;
-    std::cout <<    "\t-L \033[4mlevel\033[0m \t\tprofondeur d'exploration" << std::endl;
+    std::cout <<    "\t-h \t\t\tAffiche l'aide" << std::endl;
+    std::cout <<    "\t-L \033[4mlevel\033[0m \t\tProfondeur d'exploration" << std::endl;
+    std::cout <<    "\t-J \t\t\tTransforme les données de sortie en JSON" << std::endl;
     std::cout << "\n\033[1mARGUMENTS\033[0m" << std::endl;
-    std::cout <<    "\tftp_server_address \tadresse du serveur FTP" << std::endl;
-    std::cout <<    "\tusername \t\tnom d'utilisateur" << std::endl;
-    std::cout <<    "\tpassword \t\tmot de passe" << std::endl;
+    std::cout <<    "\tftp_server_address \tAdresse du serveur FTP" << std::endl;
+    std::cout <<    "\tusername \t\tNom d'utilisateur" << std::endl;
+    std::cout <<    "\tpassword \t\tMot de passe" << std::endl;
 
     // Fin du programme
     exit( 0 );

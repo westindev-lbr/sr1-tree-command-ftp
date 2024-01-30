@@ -37,27 +37,40 @@ C'est donc à vous d'envoyer ces commandes du standard FTP en utilisant des sock
 
 ## Visuals
 
-![img](./screen_tree_terminal.png)
+![img](./doc/screen_tree_terminal.png)
 
 ## Installation
 
 ## Utilisation
 
-Client :
+La présence d'un makefile vous permettra de build facilement ce projet
 
 ```sh
-cd projects/client
 make 
 ```
 
+* Consulter l'aide :
+
 ```sh
-./bin/client-ftp-0.1.0 ftp.ubuntu.com
+./bin/tree-ftp -h
 ```
 
-* Avec profondeur d'exploration (optionnel) ainsi que nom d'utilisateur et mot de passe
+* Avec utilisateur anonymous et sans mot de passe :
 
 ```sh
-./bin/client-ftp-0.1.0 -L 3 ftp.dlptest.com dlpuser rNrKYTX9g7z3RgJRmxWuGHbeu
+./bin/tree-ftp ftp.ubuntu.com
+```
+
+* Avec profondeur d'exploration (optionnel) ainsi que nom d'utilisateur et mot de passe :
+
+```sh
+./bin/tree-ftp -L 3 ftp.dlptest.com dlpuser rNrKYTX9g7z3RgJRmxWuGHbeu
+```
+
+* Affichage JSON + Profondeur :
+
+```sh
+./bin/tree-ftp -L 3 ftp.dlptest.com dlpuser rNrKYTX9g7z3RgJRmxWuGHbeu -J
 ```
 
 ## Roadmap

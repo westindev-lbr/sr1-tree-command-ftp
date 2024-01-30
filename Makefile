@@ -6,8 +6,8 @@ LEAK= -fno-omit-frame-pointer -fno-optimize-sibling-calls -fsanitize=address -fs
 GTEST_LIBS= -L/opt/homebrew/Cellar/googletest/1.14.0/lib -lgtest -lgtest_main -pthread
 
 
-PROG=client-ftp-${VERSION}
-VERSION=0.1.0
+PROG=tree-ftp
+VERSION=0.7.0
 
 
 SRCDIR= src
