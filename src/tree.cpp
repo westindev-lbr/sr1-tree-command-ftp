@@ -93,15 +93,15 @@ void Tree::PrintTree() {
     PrintReport();
 }
 
-void Tree::PrintSubTree( const std::string& prefix, bool isLast ) {
-    std::string branch = isLast ? "└── " : "├── ";
+void Tree::PrintSubTree( const std::string& prefix, bool is_last ) {
+    std::string branch = is_last ? "└── " : "├── ";
     std::cout << prefix << branch << this->name_ << std::endl;
 
     // Construction du préfixe pour les enfants
-    std::string childPrefix = prefix + ( isLast ? "    " : "│   " );
+    std::string child_prefix = prefix + ( is_last ? "    " : "│   " );
 
     for ( size_t i = 0; i < children_.size(); ++i ) {
-        children_[i]->PrintSubTree( childPrefix, i == children_.size() - 1 );
+        children_[i]->PrintSubTree( child_prefix, i == children_.size() - 1 );
     }
 }
 

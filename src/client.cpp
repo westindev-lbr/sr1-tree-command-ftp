@@ -261,34 +261,35 @@ void ClientFtp::DeepFirstSearch( Tree* current_tree, int depth ) {
             catch ( FtpException& e ) {
                 if ( e.GetCodeError() == 550 ) {
                     std::cerr << "EXCEPTIONS => " << e.what() << '\n';
+                    // Passe à l'élément suivant
                     continue;
                 }
                 else {
+                    // Fermeture des sockets et libération de la mémoire
+                    // Avant tentative de reconnexion
                     CloseControlSocket();
                     CloseDataSocket();
+
+                    // Reconnexion au serveur
                     ConnectToServerProcess();
-                    // ! Réception de la réponse du serveur
                     std::pair<int, std::string> response = ReadResponse();
                     std::cout << response.first << " " << response.second;
 
-                    // ! (1) Envoi de l'utilisateur
+                    // Login
                     SendCommand( Command::USER );
                     response =  ReadResponse();
                     std::cout << response.first << " " << response.second;
 
-                    // ! (2) Envoi du mot de passe
                     SendCommand( Command::PASS );
                     response =  ReadResponse();
                     std::cout << response.first << " " << response.second;
 
-                    // ! (3) Envoi de la commande passive
+                    // Changement de répertoire
                     EnterInPassiveMode();
                     ConnectToDataChannelProcess();
                     ListCurrentDirectoryCommand();
                     ReadResponseDataChannel();
                     current_tree->InitTree( buffer_data_ );
-
-
                 }
 
             }
@@ -296,7 +297,6 @@ void ClientFtp::DeepFirstSearch( Tree* current_tree, int depth ) {
         }
 
         // Retour au répertoire parent
-        // ChangeDirectory( ".." );
         BackToParentDirectory();
     }
 }
