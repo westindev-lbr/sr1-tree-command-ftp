@@ -88,6 +88,9 @@ void Tree::PrintTree() {
     for ( size_t i = 0; i < children_.size(); ++i ) {
         children_[i]->PrintSubTree( "", i == children_.size() - 1 );
     }
+
+    std::cout << std::endl; 
+    PrintReport();
 }
 
 void Tree::PrintSubTree( const std::string& prefix, bool isLast ) {
@@ -192,4 +195,30 @@ std::string Tree::ConvertDirToJson( std::string prefix ) const {
 
 void Tree::PrintTreeJson() {
     std::cout << this->ConvertTreeToJson() << std::endl;
+}
+
+std::pair<int, int> Tree::UpdateCountDirFileRecursive() {
+
+    std::pair<int, int> nb_dir_file = std::make_pair( 0, 0 );
+
+    if ( this->is_dir_ ) {
+        nb_dir_file.first = 1;
+        for ( const auto& child : children_ ) {
+            std::pair<int, int> nb_dir_file_child = child->UpdateCountDirFileRecursive();
+            // Cumul des compteurs de fichiers et de répertoires
+            nb_dir_file.first += nb_dir_file_child.first;
+            nb_dir_file.second += nb_dir_file_child.second;
+        }
+    }
+    else {
+        nb_dir_file.second = 1;
+    }
+
+    return nb_dir_file;
+}
+
+void Tree::PrintReport() {
+    std::pair<int, int> total =  UpdateCountDirFileRecursive();
+    std::cout << total.first << " répertoires, ";
+    std::cout << total.second << " fichiers" << std::endl;
 }

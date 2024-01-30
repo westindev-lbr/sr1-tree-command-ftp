@@ -31,6 +31,7 @@ public:
     Tree* GetParent() const;
     bool GetIsDir() const;
     std::vector<Tree*> GetChildren() const;
+    std::pair<int,int> UpdateCountDirFileRecursive();
     std::string ConvertTreeToJson();
 
 private:
@@ -44,7 +45,6 @@ private:
     std::string date_;
     std::string time_;
     std::string name_;
-
     Tree* parent_;
     std::vector<Tree*> children_;
 
@@ -52,6 +52,7 @@ private:
     std::string ConvertNodeToJson( std::string prefix ) const;
     std::string ConvertFileToJson( std::string prefix ) const;
     std::string ConvertDirToJson( std::string prefix ) const;
+    void PrintReport();   
 };
 
 #endif  //TREE_HPP
